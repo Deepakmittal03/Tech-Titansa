@@ -33,7 +33,7 @@ interface ModuleAccess {
   limited?: boolean;
 }
 
-const ROLE_PERMISSIONS: Record<UserRole, Record<string, ModuleAccess>> = {
+export const ROLE_PERMISSIONS: Record<UserRole, Record<string, ModuleAccess>> = {
   super_admin: {
     dashboard:          { actions: ['view', 'create', 'edit', 'delete', 'manage'] },
     products:           { actions: ['view', 'create', 'edit', 'delete', 'manage'] },

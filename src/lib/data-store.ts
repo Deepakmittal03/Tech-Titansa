@@ -657,10 +657,17 @@ const STORAGE_KEYS = {
   FRAUD_ALERTS: 'pengo_fraud_alerts',
 };
 
-// ─── Browser Storage Helper ──────────────────────────────────────────────────
+// ─── Browser Storage & In-Memory Fallback Helper ─────────────────────────────
+
+const inMemoryStore = new Map<string, any>();
 
 function getStored<T>(key: string, fallback: T): T {
-  if (typeof window === 'undefined') return fallback;
+  if (typeof window === 'undefined') {
+    if (!inMemoryStore.has(key)) {
+      inMemoryStore.set(key, JSON.parse(JSON.stringify(fallback)));
+    }
+    return inMemoryStore.get(key);
+  }
   try {
     const item = window.localStorage.getItem(key);
     return item ? JSON.parse(item) : fallback;
@@ -670,7 +677,10 @@ function getStored<T>(key: string, fallback: T): T {
 }
 
 function setStored<T>(key: string, value: T): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {
+    inMemoryStore.set(key, value);
+    return;
+  }
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
   } catch (err) {
@@ -681,6 +691,16 @@ function setStored<T>(key: string, value: T): void {
 // ─── Universal Store Engine ───────────────────────────────────────────────────
 
 export class DataStore {
+  // Barcode Uniqueness Validator
+  static isBarcodeUnique(barcode: string, excludeId?: string): boolean {
+    const products = this.getProducts();
+    const cleanBarcode = barcode.trim().toLowerCase();
+    const existing = products.find(
+      (p) => p.barcode.trim().toLowerCase() === cleanBarcode && p.id !== excludeId
+    );
+    return !existing;
+  }
+
   // Products
   static getProducts(): Product[] {
     return getStored(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
