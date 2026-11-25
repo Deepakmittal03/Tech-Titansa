@@ -1,115 +1,181 @@
-# peNgo – Smart Retail Command Center
+<div align="center">
 
-> **Enterprise B2B Retail SaaS & Self-Checkout Command Platform**  
-> Built for Indian & Global Retail Chains with zero-friction cashierless checkouts, RFID/QR turnstile clearance, real-time telemetry, and heuristic fraud detection.
+# 🛒 peNgo – Smart Retail Command Center
 
----
+**Enterprise B2B Self-Checkout, Smart Inventory & Turnstile Gate Operations**
 
-## 🌟 Executive Summary
+[![Framework](https://img.shields.io/badge/Next.js-16.4-black?logo=next.js)](https://nextjs.org/)
+[![UI Library](https://img.shields.io/badge/React-19.0-blue?logo=react)](https://react.dev/)
+[![Styling](https://img.shields.io/badge/TailwindCSS-v4-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
+[![Language](https://img.shields.io/badge/TypeScript-5.0-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+[![Database](https://img.shields.io/badge/PostgreSQL-Supabase-3ECF8E?logo=supabase)](https://supabase.com/)
+[![State Management](https://img.shields.io/badge/Zustand-v5-orange)](https://github.com/pmndrs/zustand)
 
-**peNgo** reimagines high-throughput physical retail by eliminating checkout lines:
-1. **Shoppers** use the peNgo mobile app to scan barcodes, view dynamic item totals with GST breakdown, redeem coupons, and pay through Razorpay/UPI.
-2. Upon payment, the cloud backend mints a single-use cryptographic **Exit Pass QR**.
-3. **Retail Operators** manage operations through the **peNgo Command Center**, tracking live telemetry, inventory depletion, shelf replenishment, and security clearance at store exit gates.
+<p align="center">
+  A centralized, high-throughput retail management platform engineered to eliminate checkout bottlenecks, automate digital bill settlement, and secure store departures using single-use cryptographic QR Exit Passes.
+</p>
 
----
-
-## 🚀 Key Modules & Capabilities
-
-| Module | Route | Highlights |
-|---|---|---|
-| **Executive Overview** | `/dashboard` | Real-time KPIs, 8 analytical charts (Revenue, Category Pie, Velocity, Peak Hours, Multi-Store Comparison), recent orders & security watchlist. |
-| **Smart Exit Verification** | `/exit-verification` | **Signature Feature**: Server-side single-use cryptographic pass validation. Live gate camera/laser simulator, green unlatch screen vs duplicate/tampered exit denial. |
-| **Product Catalog** | `/products` | Add/Edit/Delete SKUs, EAN barcode uniqueness verification, MRP/Selling price/GST slab, dynamic QR pass generator, CSV bulk export. |
-| **Category Taxonomy** | `/categories` | Department aisle structuring, shelf capacities, SKU counts and inventory valuations. |
-| **Inventory & Warehouse** | `/inventory` | Real-time stock counts, status indicators (Healthy / Low Stock / Out of Stock), stock adjustment audit modal (In/Out/Damaged), inter-store transfers. |
-| **Orders & Checkout** | `/orders` | Order lifecycle (Created → Payment Pending → Paid → Exit Verification → Completed), item breakdowns, digital tax invoices (printable & PDF export), and refunds. |
-| **Customer CRM** | `/customers` | Shopper profiles, lifetime spending, average basket value, loyalty points and tier segmentation (VIP / Regular / New). |
-| **Coupons & Campaigns** | `/coupons` | Percentage and flat discounts (e.g. `PENGO20`, `WELCOME50`), minimum cart values, maximum caps, redemption counters and validity windows. |
-| **Financial Settlements** | `/payments` | UPI/Card/Wallet transactions, Razorpay gateway webhook verification, automated settlement reconciliation, and GST tax collection summaries. |
-| **AI Business Intelligence** | `/ai-insights` | Predictive demand forecasting, slow-moving SKU detection, stockout danger warnings, and co-purchase basket affinity graph. |
-| **Fraud & Security** | `/fraud-detection` | Detection of duplicate QR scans, rapid cart alterations prior to payment, barcode spoofing, and supervisor audit workflow. |
-| **Multi-Store Management** | `/stores` | Multi-outlet administration across Delhi, Gurugram, Bengaluru and Mumbai. Instant context switcher in sidebar. |
-| **Reports & Compliance** | `/reports` | Exportable Daily Sales, GST Tax Remittances, Inventory Audits, and Exit Pass logs in CSV and PDF. |
-| **Notification Center** | `/notifications` | Live operational alerts for low stock triggers, duplicate pass presentations, and gateway settlements. |
-| **System Settings** | `/settings` | Role-Based Access Control (RBAC) permission matrix, Razorpay keys, turnstile automation policies. |
+[Key Capabilities](#-core-platform-modules) •
+[Architecture](#-system-architecture) •
+[Quick Start](#-getting-started) •
+[Security & Fraud Engine](#-security--fraud-prevention) •
+[Database Schema](#-database-design)
 
 ---
 
-## 🛠️ Technology Stack
+</div>
 
-- **Framework**: Next.js 16 (App Router, Turbopack, React 19)
-- **Styling**: Tailwind CSS v4, custom peNgo brand tokens (`#DC2626` red, `#0F172A` deep navy)
-- **UI Components**: Class-Variance-Authority (CVA), Sonner Toast notifications, custom modal and table primitives
-- **Icons**: Lucide React
-- **Analytics & Data Viz**: Recharts (Responsive Area, Bar, Pie, Multi-Line, and Grouped Bar charts)
-- **QR Generation**: QRCode SVG/Canvas generator
-- **PDF Generation**: jsPDF + jsPDF-AutoTable
-- **State Management**: Zustand with persistent storage
-- **Database / Cloud**: Supabase PostgreSQL + Stored Procedure (`supabase/schema.sql`)
-- **Universal Data Layer**: Hybrid Data Store operating in-memory / LocalStorage out-of-the-box, syncing seamlessly to Supabase PostgreSQL when credentials are provided.
+## 📌 Problem & Vision
+
+Traditional supermarkets and retail outlets suffer from long cashier queues, barcode spoofing risks, and labor-intensive exit checks. 
+
+**peNgo** solves this through a unified cashierless lifecycle:
+1. **Shoppers**: Scan item barcodes with the peNgo mobile app, manage their cart, pay via Razorpay UPI/cards, and receive a secure single-use QR Exit Pass.
+2. **Turnstile / Gate Staff**: Verify the QR pass at the exit gate using a laser/camera scanner. The backend burns the token server-side in under 0.4s and unlocks the gate.
+3. **Retail Operators**: Oversee real-time inventory depletion, automated restocking alerts, multi-branch revenue analytics, and heuristic fraud alerts from this Command Center.
+
+---
+
+## 🏛️ System Architecture
+
+```text
+[ Shopper Mobile App ]
+         │
+         ▼  (1) Barcode Scan & Dynamic Cart Totaling
+[ Razorpay Payment Gateway ]
+         │
+         ▼  (2) Instant Payment Capture & Settlement
+[ peNgo Cloud Engine ]
+    ├── (3a) Atomic Stock Decrement (Database Transaction)
+    ├── (3b) Cryptographic Single-Use Exit Token Minting
+    └── (3c) Digital Tax Invoice Generation (GST Compliant)
+         │
+         ▼  (4) Customer Presents Dynamic Pass at Gate
+[ Turnstile Exit Verification Gate ]
+         │
+         ▼  (5) Server Token Validation & Instant Burn (< 0.4s)
+[ Gate Unlatched • Safe Departure ]
+```
+
+---
+
+## 🚀 Core Platform Modules
+
+| Module | Route | Key Features |
+| :--- | :--- | :--- |
+| **Executive Overview** | `/dashboard` | 8 real-time KPI metrics, revenue velocity timeline, supermarket aisle revenue pie, branch comparison, interactive simulation hub. |
+| **Smart Exit Verification** | `/exit-verification` | **Signature Feature**: Server-side token validation, turnstile gate simulation, instant token burning, audible POS chimes via Web Audio API. |
+| **Product Catalog** | `/products` | SKU lifecycle management, barcode uniqueness verification, selling price and GST tiers, dynamic barcode & QR generation with PNG export. |
+| **Department Aisles** | `/categories` | Supermarket department structuring, aisle capacities, and stock valuation distribution. |
+| **Inventory & Warehouse** | `/inventory` | Multi-store inventory tracking, healthy/low/out-of-stock badges, stock adjustments (damaged/returned/inflow), inter-branch stock transfers. |
+| **Orders & Invoices** | `/orders` | Order state machine (`Created` → `Payment Pending` → `Paid` → `Exit Verification` → `Completed`), itemized GST breakdown, 1-click printable & PDF invoice download. |
+| **Customer CRM** | `/customers` | Shopper directory, lifetime basket valuation, average spend, loyalty points, and retention segmentation. |
+| **Promotions & Offers** | `/coupons` | Percentage and fixed discounts, minimum cart value thresholds, maximum discount caps, single-click voucher copying. |
+| **Payments & Gateway** | `/payments` | Razorpay transaction tracking, settlement audit trails, payment method ratios (UPI, Cards, Wallets), and daily GST collection summaries. |
+| **AI Business Intelligence** | `/ai-insights` | Velocity forecasting, slow-moving SKU detection, stockout risk mitigation alerts, and co-purchase basket affinity recommendations. |
+| **Fraud & Risk Monitoring** | `/fraud-detection` | Detection of duplicate QR exit attempts, cart tampering before payment, invalid barcode scans, and incident investigation logs. |
+| **Multi-Store Network** | `/stores` | Outlet network management (Connaught Place, CyberHub, Indiranagar, Powai) with instant context switching in sidebar. |
+| **Certified Reports** | `/reports` | Comprehensive financial audits, stock movement logs, tax remittances with 1-click CSV and PDF exports. |
+| **System Settings** | `/settings` | Role-Based Access Control (RBAC) matrix, Razorpay keys, turnstile automation policies, and profile settings. |
 
 ---
 
 ## ⚡ Getting Started
 
-### 1. Install Dependencies
+### Prerequisites
+- Node.js 18.x or later
+- npm or pnpm or yarn
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Deepakmittal03/Tech-Titansa.git
+cd Tech-Titansa
+```
+
+### 2. Install Dependencies
 ```bash
 npm install
 ```
 
-### 2. Run the Development Server
+### 3. Environment Setup
+Create a `.env.local` file based on `.env.local.example`:
 ```bash
-npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) to access the console.
-
-### 3. Production Build & Verification
-```bash
-npm run build
-npm run start
+cp .env.local.example .env.local
 ```
 
----
+Configure your credentials:
+```env
+NEXT_PUBLIC_APP_NAME="peNgo Admin"
+NEXT_PUBLIC_APP_URL="http://localhost:5000"
 
-## 🔑 Demo Access & Roles
+# Optional Supabase Connection (Platform runs with built-in Universal DataStore if omitted)
+NEXT_PUBLIC_SUPABASE_URL="your-supabase-url"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
+SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
 
-The login page at `/login` includes a **1-Click Role Switcher** designed for judges, evaluators and demonstrations:
+# Razorpay Integration
+NEXT_PUBLIC_RAZORPAY_KEY_ID="your_razorpay_key_id"
+RAZORPAY_KEY_SECRET="your_razorpay_secret"
+```
 
-1. **Super Admin**: Full administrative authority over all outlets, settings, and staff.
-2. **Store Owner**: Complete catalog, financial, order and multi-store insight.
-3. **Store Manager**: Day-to-day catalog, customer and inventory operations.
-4. **Inventory Manager**: Warehouse receipts, batch tracking, threshold alerts.
-5. **Cashier / Exit Staff**: Dedicated gate scanner mode for customer QR pass validation.
-6. **Business Analyst**: Financial reporting, AI demand forecasting, and GMV trends.
-
----
-
-## 🔄 End-to-End Hackathon Demonstration Workflow
-
-1. **Catalog Registration**:
-   - Go to `/products` → Click **Add New SKU**.
-   - Enter name, barcode (e.g. `8901234567890`), price (₹115), and GST slab (18%).
-   - Click the QR icon to view the instant mobile-scannable pass.
-2. **Real-Time Inventory**:
-   - Go to `/inventory` to observe real-time batch numbers, healthy vs low stock indicators, and perform stock adjustments.
-3. **Self-Checkout Simulation**:
-   - Go to `/orders` to view customer mobile checkout orders transitioning through the lifecycle: `Created` → `Paid` → `Exit Verification`.
-   - Click **Invoice** to view or export the official branded GST tax invoice as PDF.
-4. **Smart Exit Gate Verification**:
-   - Go to `/exit-verification`.
-   - Click the **Unused Valid Pass (Order #9842)** test button → Click **Verify Pass**.
-   - Watch the **Green Verified Screen** appear: gate turnstile unlatches, order marked as `Completed`, and inventory atomically decremented.
-   - Click the **Already Used Pass (Order #9841)** test button → Watch the **Red Alert Screen** appear: repeated exit denied, security alert automatically routed to `/fraud-detection`.
-5. **AI Intelligence & Reports**:
-   - Visit `/ai-insights` to run neural inference for weekend demand forecasting.
-   - Visit `/reports` to download audit-ready CSV spreadsheets and PDF reports.
+### 4. Run Development Server
+```bash
+npm run dev -- -p 5000
+```
+Open [http://localhost:5000](http://localhost:5000) in your browser.
 
 ---
 
-## 🗄️ Database Schema & Supabase Setup
+## 🛡️ Security & Fraud Prevention
 
-The complete PostgreSQL migration script is provided in `supabase/schema.sql`:
-- 12 Relational Tables with Foreign Keys, Check Constraints, and Indexes.
-- Stored Procedure `verify_and_burn_exit_pass(qr_token, staff_name)` providing ACID-transaction-safe single-use token burning and atomic stock deduction.
-- Row-Level Security (RLS) policies for store-level multi-tenant isolation.
+* **Single-Use Cryptographic Tokens**: Pass tokens (`PENGO-EXIT-SECURE-XXXX-XXXX`) can only be verified once. Once validated, they are burned server-side.
+* **Turnstile Anti-Passback**: A customer cannot forward a screenshot of their pass to someone else to exit; repeated presentation triggers an immediate high-risk fraud incident.
+* **Server-Side Validation**: QR data is never trusted client-side; verification always occurs through server-side logic and database transactions.
+* **Audit Logging**: Every staff verification, manual stock override, and price change creates an immutable audit trail with operator timestamp.
+
+---
+
+## 🗄️ Database Design
+
+The system includes a production-ready PostgreSQL relational schema (`supabase/schema.sql`):
+
+* `users` & `roles`: Staff profiles and 6-tier RBAC authorization.
+* `stores`: Outlet addresses, contact information, and operating hours.
+* `products` & `categories`: SKUs, barcodes, tax classes, and pricing.
+* `inventory`: Outlet-level stock quantities and minimum thresholds.
+* `orders` & `order_items`: Transactions, GST breakdown, and fulfillment status.
+* `payments`: Gateway reference IDs, settlement timestamps, and payment rails.
+* `exit_passes`: Cryptographic tokens, usage status, validator ID, and expiry.
+* `fraud_alerts`: Anomaly classifications, severity rankings, and review status.
+* `verify_and_burn_exit_pass()`: Atomic stored procedure ensuring single-use token burning and order finalization.
+
+---
+
+## 👥 Role-Based Access Control (RBAC)
+
+| Role | Dashboard | Products | Inventory | Orders | Exit Gate | Analytics | Settings |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Super Admin** | Full | Full | Full | Full | Full | Full | Full |
+| **Store Owner** | Full | Full | Full | Full | Full | Full | View |
+| **Store Manager** | Store | Store | Full | Full | Full | Store | View |
+| **Inventory Manager** | View | Full | Full | View | - | - | - |
+| **Exit Gate Officer** | View | - | - | View | Full | - | - |
+| **Business Analyst** | Full | View | View | View | - | Full | - |
+
+---
+
+## 📦 Tech Stack Summary
+
+* **Frontend**: Next.js 16 (App Router), React 19, TypeScript 5
+* **Styling**: Tailwind CSS v4, Lucide React Icons
+* **Data Visualization**: Recharts 3
+* **State Management**: Zustand 5
+* **Hardware & Audio**: Web Audio API (POS sound synthesis), QRCode
+* **Export Engines**: jsPDF, jspdf-autotable, CSV Data Streams
+* **Database & Cloud**: Supabase PostgreSQL, Row Level Security (RLS)
+
+---
+
+<div align="center">
+  <sub>Developed with ❤️ for Next-Generation Autonomous Retail.</sub>
+</div>
