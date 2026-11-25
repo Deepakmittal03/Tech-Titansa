@@ -11,6 +11,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@google/genai": "^3.6.1",
     "@hookform/resolvers": "^7.0.9",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.119.2",
