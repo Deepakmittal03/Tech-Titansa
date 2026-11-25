@@ -10,6 +10,7 @@
 [![Language](https://img.shields.io/badge/TypeScript-5.0-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![Database](https://img.shields.io/badge/PostgreSQL-Supabase-3ECF8E?logo=supabase)](https://supabase.com/)
 [![State Management](https://img.shields.io/badge/Zustand-v5-orange)](https://github.com/pmndrs/zustand)
+[![Tests](https://img.shields.io/badge/Tests-16%20Passing-brightgreen?logo=vitest)](https://github.com/Deepakmittal03/Tech-Titansa)
 
 <p align="center">
   A centralized, high-throughput retail management platform engineered to eliminate checkout bottlenecks, automate digital bill settlement, and secure store departures using single-use cryptographic QR Exit Passes.
@@ -161,6 +162,26 @@ The system includes a production-ready PostgreSQL relational schema (`supabase/s
 | **Inventory Manager** | View | Full | Full | View | - | - | - |
 | **Exit Gate Officer** | View | - | - | View | Full | - | - |
 | **Business Analyst** | Full | View | View | View | - | Full | - |
+
+---
+
+## 🧪 Automated Testing & Code Quality
+
+The platform includes a test suite powered by **Vitest** covering core retail state transitions, security, and financial integrity:
+
+```bash
+# Run unit & integration tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+```
+
+### Test Coverage Highlights:
+- **`tests/exit-verification.test.ts`**: Single-use cryptographic exit token verification, anti-passback duplicate rejection, tampered token fraud logging, and atomic pass burning.
+- **`tests/data-store.test.ts`**: EAN barcode uniqueness validation, dynamic inventory adjustment audits, checkout cart stock deduction, and multi-branch metrics isolation.
+- **`tests/auth-rbac.test.ts`**: Role boundary checks across all 6 administrative tiers.
+- **`tests/pricing-tax.test.ts`**: Statutory GST slab calculations (5%, 12%, 18%), currency formatting (INR ₹), and promotional discount cap thresholds.
 
 ---
 
