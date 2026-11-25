@@ -5,6 +5,7 @@
 **Enterprise B2B Self-Checkout, Smart Inventory & Turnstile Gate Operations**
 
 [![Framework](https://img.shields.io/badge/Next.js-16.4-black?logo=next.js)](https://nextjs.org/)
+[![AI Engine](https://img.shields.io/badge/Gemini_2.0_Flash-Google_GenAI-8E75B2?logo=google)](https://ai.google.dev/)
 [![UI Library](https://img.shields.io/badge/React-19.0-blue?logo=react)](https://react.dev/)
 [![Styling](https://img.shields.io/badge/TailwindCSS-v4-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
 [![Language](https://img.shields.io/badge/TypeScript-5.0-3178C6?logo=typescript)](https://www.typescriptlang.org/)
